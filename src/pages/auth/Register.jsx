@@ -1,20 +1,52 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import background1 from '../../assets/background1.jpeg';
+import { useAuth } from '../../contexts/AuthContext';
+
+const UserRole = {
+  ORGANIZER: 'organizer',
+};
 
 const Register = () => {
   const navigate = useNavigate();
+  const { register } = useAuth();
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
     password: '',
     confirmPassword: '',
+    role: UserRole.ORGANIZER,
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     console.log('Register data:', formData);
+
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    if (formData.password.length < 7 || formData.password.length > 32) {
+      setError('Password must be between 7 and 32 characters long');
+      return;
+    }
+
+    try {
+      await register({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+        role: formData.role,
+      });
+      navigate('/events');
+    } catch (error) {
+      setError(error.message || 'Registration failed');
+    }
   };
 
   return (
@@ -30,6 +62,8 @@ const Register = () => {
           <h2 className="text-3xl font-bold text-dark-green">Create Account</h2>
           <p className="mt-2 text-gray-600">Join our wellness community today</p>
         </div>
+
+        {error && <div className="text-red-500 text-sm text-center mb-4">{error}</div>}
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="grid grid-cols-2 gap-4">
@@ -62,6 +96,20 @@ const Register = () => {
                 onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
               />
             </div>
+          </div>
+          <div className="space-y-1">
+            <label htmlFor="role" className="hidden font-medium text-dark-green">
+              Role
+            </label>
+            <input
+              id="role"
+              type="text"
+              required
+              className="hidden w-full text-sm text-dark-green px-3 py-2 border border-gray-300 rounded-lg focus:outline-none
+                  focus:ring-2 focus:ring-light-green"
+              value={formData.role}
+              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+            />
           </div>
 
           <div className="space-y-1">
