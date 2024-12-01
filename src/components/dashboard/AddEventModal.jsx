@@ -1,5 +1,11 @@
 import { useState } from 'react';
 
+const EventStatus = {
+  SCHEDULED: 'scheduled',
+  CANCELLED: 'cancelled',
+  COMPLETED: 'completed',
+};
+
 const AddEventModal = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({
     title: '',

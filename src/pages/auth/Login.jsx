@@ -1,17 +1,30 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import background1 from '../../assets/background1.jpeg';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     console.log('Login data:', formData);
+    try {
+      await login({
+        email: formData.email,
+        password: formData.password,
+      });
+      navigate('/events');
+    } catch (error) {
+      setError(error.message || 'Login failed');
+    }
   };
 
   return (
@@ -27,6 +40,8 @@ const Login = () => {
           <h2 className="text-3xl font-bold text-dark-green">Welcome Back</h2>
           <p className="mt-2 text-gray-600">Please sign in to your account</p>
         </div>
+
+        {error && <div className="text-red-500 text-sm text-center mb-4">{error}</div>}
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-1">
@@ -77,7 +92,7 @@ const Login = () => {
             Sign in
           </button>
 
-          <p className="text-center text-sm text-gray-600">
+          <div className="text-center text-sm text-gray-600">
             Don't have an account?
             <div
               onClick={() => navigate('/register')}
@@ -85,7 +100,7 @@ const Login = () => {
             >
               Sign up
             </div>
-          </p>
+          </div>
         </form>
       </div>
     </div>

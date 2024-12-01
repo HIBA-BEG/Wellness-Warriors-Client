@@ -3,9 +3,12 @@ import { GrRun } from 'react-icons/gr';
 import { MdEventAvailable } from 'react-icons/md';
 import { FaUsers } from 'react-icons/fa6';
 import profileAvatar from '../../assets/profileAvatar.jpg';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Sidebar = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  console.log(user);
 
   return (
     <div className="w-48 bg-dark-green max-h-screen p-4 m-3 rounded-lg flex flex-col justify-between ">
@@ -41,9 +44,9 @@ const Sidebar = () => {
           <img src={profileAvatar} alt="Profile" className="w-9 h-9 rounded-lg mr-3" />
           <div>
             <p className="text-white">
-              Hiba <span className="text-light-green">Hiba</span>
+              {user.firstName} <span className="text-light-green">{user.lastName}</span>
             </p>
-            <p className="text-gray-400 text-sm">eytch@gmail.com</p>
+            <p className="text-gray-400 text-sm">{user.email}</p>
           </div>
         </div>
       </div>

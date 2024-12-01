@@ -1,5 +1,9 @@
 import { useState } from 'react';
 
+const UserRole = {
+  PARTICIPANT: 'participant',
+};
+
 const AddParticipantModal = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({
     firstName: '',
@@ -74,10 +78,10 @@ const AddParticipantModal = ({ isOpen, onClose }) => {
           {/* </div> */}
 
           <div>
-            <label className="hidden block font-medium text-gray-700 ">Role</label>
+            <label className="hidden font-medium text-gray-700 ">Role</label>
             <textarea
               rows="3"
-              className="hidden mt-1 block w-full text-sm bg-light-gray text-dark-green  rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="hidden mt-1 w-full text-sm bg-light-gray text-dark-green  rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               value={formData.role}
               onChange={(e) => setFormData({ ...formData, role: e.target.value })}
             />
