@@ -4,9 +4,13 @@ import ParticipantCard from '../components/dashboard/ParticipantCard';
 import { TiPlusOutline } from 'react-icons/ti';
 import AddParticipantModal from '../components/dashboard/AddParticipantModal';
 import participantService from '../services/participantService';
+import UpdateParticipantModal from '../components/dashboard/UpdateParticipantModal';
+import LoadingSpinner from '../components/common/LoadingSpinner';
 
 const Participants = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [selectedParticipant, setSelectedParticipant] = useState(null);
   const [participants, setParticipants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -24,6 +28,17 @@ const Participants = () => {
     }
   };
 
+  const handleUpdateClick = (participant) => {
+    console.log('Selected participant:', participant);
+    setSelectedParticipant(participant);
+    setIsUpdateModalOpen(true);
+  };
+
+  const handleUpdateSuccess = () => {
+    fetchParticipants();
+    setIsUpdateModalOpen(false);
+  };
+
   const handleDelete = async (id) => {
     try {
       await participantService.deleteParticipant(id);
@@ -37,6 +52,7 @@ const Participants = () => {
     fetchParticipants();
   }, []);
 
+  if (loading) return <LoadingSpinner />;
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar />
@@ -89,6 +105,7 @@ const Participants = () => {
                   participant={participant}
                   onDelete={handleDelete}
                   onRefresh={fetchParticipants}
+                  onUpdateClick={() => handleUpdateClick(participant)}
                 />
               ))}
             </div>
@@ -99,6 +116,12 @@ const Participants = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSuccess={fetchParticipants}
+      />
+      <UpdateParticipantModal
+        isOpen={isUpdateModalOpen}
+        onClose={() => setIsUpdateModalOpen(false)}
+        onSuccess={handleUpdateSuccess}
+        participant={selectedParticipant}
       />
     </div>
   );
