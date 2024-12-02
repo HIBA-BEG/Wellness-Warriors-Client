@@ -24,6 +24,7 @@ export const AuthProvider = ({ children }) => {
           setUser(userData);
         }
       } catch (error) {
+        console.error('Error verifying token:', error);
         localStorage.removeItem('token');
       } finally {
         setLoading(false);
@@ -44,14 +45,22 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     try {
       const { token } = await authService.register(userData);
-
       localStorage.setItem('token', token);
-
       const userInfo = await authService.verifyToken();
       setUser(userInfo);
-
       return { success: true };
     } catch (error) {
+      console.error('Error registering user:', error);
+      throw error;
+    }
+  };
+
+  const createParticipant = async (participantData) => {
+    try {
+      const response = await authService.register(participantData);
+      return response;
+    } catch (error) {
+      console.error('Error creating participant:', error);
       throw error;
     }
   };
@@ -66,6 +75,7 @@ export const AuthProvider = ({ children }) => {
     loading,
     login,
     register,
+    createParticipant,
     logout,
     isAuthenticated: !!user,
   };

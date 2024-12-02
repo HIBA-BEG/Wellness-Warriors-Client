@@ -1,11 +1,41 @@
+import { useState, useEffect } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import ParticipantCard from '../components/dashboard/ParticipantCard';
-import { useState } from 'react';
 import { TiPlusOutline } from 'react-icons/ti';
 import AddParticipantModal from '../components/dashboard/AddParticipantModal';
+import participantService from '../services/participantService';
 
 const Participants = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [participants, setParticipants] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  const fetchParticipants = async () => {
+    try {
+      setLoading(true);
+      const data = await participantService.getAllParticipants();
+      // console.log('Fetched participants 2:', data);
+      setParticipants(data);
+    } catch (err) {
+      setError(err.message || 'Failed to fetch participants');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await participantService.deleteParticipant(id);
+      setParticipants(participants.filter((p) => p._id !== id));
+    } catch (err) {
+      setError(err.message || 'Failed to delete participant');
+    }
+  };
+
+  useEffect(() => {
+    fetchParticipants();
+  }, []);
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -47,14 +77,29 @@ const Participants = () => {
         </div>
 
         <div className="p-6">
-          <div className="grid grid-cols-3 gap-6 mb-6">
-            <ParticipantCard />
-            <ParticipantCard />
-            <ParticipantCard />
-          </div>
+          {loading ? (
+            <div className="text-center">Loading participants...</div>
+          ) : error ? (
+            <div className="text-red-500 text-center">{error}</div>
+          ) : (
+            <div className="grid grid-cols-3 gap-6 mb-6">
+              {participants.map((participant) => (
+                <ParticipantCard
+                  key={participant._id}
+                  participant={participant}
+                  onDelete={handleDelete}
+                  onRefresh={fetchParticipants}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
-      <AddParticipantModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <AddParticipantModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSuccess={fetchParticipants}
+      />
     </div>
   );
 };
