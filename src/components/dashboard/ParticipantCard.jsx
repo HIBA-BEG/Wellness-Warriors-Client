@@ -38,7 +38,11 @@ const ParticipantCard = ({ participant, onDelete, onUpdateClick }) => {
 
       <div className="p-4">
         <div className="flex gap-2 justify-end">
-          <button className="text-light-green-dark hover:text-light-green" disabled={loading} onClick={onUpdateClick}>
+          <button
+            className="text-light-green-dark hover:text-light-green"
+            disabled={loading}
+            onClick={onUpdateClick}
+          >
             <FaEdit size={18} />
           </button>
           <button

@@ -29,7 +29,7 @@ const Participants = () => {
   };
 
   const handleUpdateClick = (participant) => {
-    console.log('Selected participant:', participant); 
+    console.log('Selected participant:', participant);
     setSelectedParticipant(participant);
     setIsUpdateModalOpen(true);
   };
@@ -106,7 +106,7 @@ const Participants = () => {
                   onDelete={handleDelete}
                   onRefresh={fetchParticipants}
                   onUpdateClick={() => handleUpdateClick(participant)}
-                />  
+                />
               ))}
             </div>
           )}

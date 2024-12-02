@@ -107,4 +107,4 @@ const UpdateParticipantModal = ({ isOpen, onClose, onSuccess, participant }) => 
   );
 };
 
-export default UpdateParticipantModal; 
+export default UpdateParticipantModal;
