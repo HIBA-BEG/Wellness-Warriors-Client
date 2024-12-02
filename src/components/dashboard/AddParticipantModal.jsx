@@ -1,10 +1,14 @@
 import { useState } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
 
 const UserRole = {
   PARTICIPANT: 'participant',
 };
 
-const AddParticipantModal = ({ isOpen, onClose }) => {
+const AddParticipantModal = ({ isOpen, onClose, onSuccess }) => {
+  const [loading, setLoading] = useState(false);
+  const { createParticipant } = useAuth();
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -13,13 +17,39 @@ const AddParticipantModal = ({ isOpen, onClose }) => {
     role: UserRole.PARTICIPANT,
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
-    onClose();
+    setError('');
+    setLoading(true);
+
+    console.log('Created Participant:', formData);
+    try {
+      await createParticipant({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+        role: UserRole.PARTICIPANT,
+      });
+
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        role: UserRole.PARTICIPANT,
+      });
+
+      onSuccess();
+      onClose();
+    } catch (error) {
+      setError(error.message || 'Failed to create participant');
+    }
   };
 
   if (!isOpen) return null;
+
+  if (loading) return <div>Loading...</div>;
 
   return (
     <div className="fixed inset-0 backdrop-blur-sm bg-black bg-opacity-70 flex items-center justify-center z-50">
@@ -33,6 +63,8 @@ const AddParticipantModal = ({ isOpen, onClose }) => {
         <h2 className="text-2xl text-center font-bold text-light-green border-b-2 border-dark-green pb-4 mb-4 ">
           ADD NEW PARTICIPANT
         </h2>
+
+        {error && <div className="mb-4 p-2 bg-red-100 text-red-600 rounded">{error}</div>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* <div className="grid grid-cols-2 gap-4"> */}

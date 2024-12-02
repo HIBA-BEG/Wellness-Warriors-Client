@@ -10,9 +10,6 @@ const authService = {
   register: async (userData) => {
     try {
       const response = await api.post('/auth/register', userData);
-      if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
-      }
       return response.data;
     } catch (error) {
       throw error.response?.data || { message: 'Registration failed' };
@@ -31,9 +28,7 @@ const authService = {
   verifyToken: async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await api.get('/auth/verify', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await api.get('/auth/verify', addAuthHeader(token));
       return response.data;
     } catch (error) {
       localStorage.removeItem('token');
