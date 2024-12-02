@@ -1,55 +1,43 @@
-import { useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useState, useEffect } from 'react';
+import participantService from '../../services/participantService';
 import LoadingSpinner from '../common/LoadingSpinner';
 
-const UserRole = {
-  PARTICIPANT: 'participant',
-};
-
-const AddParticipantModal = ({ isOpen, onClose, onSuccess }) => {
+const UpdateParticipantModal = ({ isOpen, onClose, onSuccess, participant }) => {
   const [loading, setLoading] = useState(false);
-  const { createParticipant } = useAuth();
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
-    password: '',
-    role: UserRole.PARTICIPANT,
   });
+
+  useEffect(() => {
+    if (participant) {
+      setFormData({
+        firstName: participant.firstName || '',
+        lastName: participant.lastName || '',
+        email: participant.email || '',
+      });
+    }
+  }, [participant]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
-    console.log('Created Participant:', formData);
     try {
-      await createParticipant({
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        password: formData.password,
-        role: UserRole.PARTICIPANT,
-      });
-
-      setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        password: '',
-        role: UserRole.PARTICIPANT,
-      });
-
+      await participantService.updateParticipant(participant._id, formData);
       onSuccess();
       onClose();
     } catch (error) {
-      setError(error.message || 'Failed to create participant');
+      setError(error.message || 'Failed to update participant');
+    } finally {
+      setLoading(false);
     }
   };
 
   if (!isOpen) return null;
-
   if (loading) return <LoadingSpinner />;
 
   return (
@@ -61,14 +49,13 @@ const AddParticipantModal = ({ isOpen, onClose, onSuccess }) => {
         >
           ✕
         </button>
-        <h2 className="text-2xl text-center font-bold text-light-green border-b-2 border-dark-green pb-4 mb-4 ">
-          ADD NEW PARTICIPANT
+        <h2 className="text-2xl text-center font-bold text-light-green border-b-2 border-dark-green pb-4 mb-4">
+          UPDATE PARTICIPANT
         </h2>
 
         {error && <div className="mb-4 p-2 bg-red-100 text-red-600 rounded">{error}</div>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* <div className="grid grid-cols-2 gap-4"> */}
           <div>
             <label className="block font-medium text-gray-700">First Name</label>
             <input
@@ -83,7 +70,7 @@ const AddParticipantModal = ({ isOpen, onClose, onSuccess }) => {
             <label className="block font-medium text-gray-700">Last Name</label>
             <input
               type="text"
-              className="mt-1 block w-full text-sm bg-light-gray text-dark-green  rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="mt-1 block w-full text-sm bg-light-gray text-dark-green rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               value={formData.lastName}
               onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
             />
@@ -93,30 +80,9 @@ const AddParticipantModal = ({ isOpen, onClose, onSuccess }) => {
             <label className="block font-medium text-gray-700">Email</label>
             <input
               type="email"
-              className="mt-1 block w-full text-sm bg-light-gray text-dark-green  rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="mt-1 block w-full text-sm bg-light-gray text-dark-green rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            />
-          </div>
-
-          <div>
-            <label className="block font-medium text-gray-700">Password</label>
-            <input
-              type="password"
-              className="mt-1 block w-full text-sm bg-light-gray text-dark-green  rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            />
-          </div>
-          {/* </div> */}
-
-          <div>
-            <label className="hidden font-medium text-gray-700 ">Role</label>
-            <textarea
-              rows="3"
-              className="hidden mt-1 w-full text-sm bg-light-gray text-dark-green  rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              value={formData.role}
-              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
             />
           </div>
 
@@ -132,7 +98,7 @@ const AddParticipantModal = ({ isOpen, onClose, onSuccess }) => {
               type="submit"
               className="px-4 py-2 text-sm font-medium text-white bg-light-green rounded-md hover:bg-dark-green hover:shadow-light-green-dark hover:shadow-md"
             >
-              Create Participant
+              Update Participant
             </button>
           </div>
         </form>
@@ -141,4 +107,4 @@ const AddParticipantModal = ({ isOpen, onClose, onSuccess }) => {
   );
 };
 
-export default AddParticipantModal;
+export default UpdateParticipantModal; 
