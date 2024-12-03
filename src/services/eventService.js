@@ -22,4 +22,14 @@ export const eventService = {
     }
   },
 
+  getAllEvents: async () => {
+    try {
+      const response = await api.get('/event', {
+        headers: getAuthHeader(),
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
 };
