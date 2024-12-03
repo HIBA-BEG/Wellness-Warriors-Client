@@ -55,13 +55,13 @@ const Sidebar = () => {
           </div>
         </div>
         <button
-            onClick={handleLogout}
-            className="mt-4 px-4 py-2 bg-light-green-dark text-white rounded-md hover:bg-light-green transition-colors duration-200 w-full flex items-center justify-center"
-            >
-            Logout
-            <GrLogout className="ml-2" />
-            <GrRun />
-          </button>
+          onClick={handleLogout}
+          className="mt-4 px-4 py-2 bg-light-green-dark text-white rounded-md hover:bg-light-green transition-colors duration-200 w-full flex items-center justify-center"
+        >
+          Logout
+          <GrLogout className="ml-2" />
+          <GrRun />
+        </button>
       </div>
     </div>
   );
