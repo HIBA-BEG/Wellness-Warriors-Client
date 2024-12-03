@@ -27,9 +27,33 @@ export const eventService = {
       const response = await api.get('/event', {
         headers: getAuthHeader(),
       });
+      console.log('getAllEvents', response.data);
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
     }
   },
+
+  updateEvent: async (id, eventData) => {
+    try {
+      const response = await api.patch(`/event/${id}`, eventData, {
+        headers: getAuthHeader(),
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  deleteEvent: async (id) => {
+    try {
+      const response = await api.delete(`/event/${id}`, {
+        headers: getAuthHeader(),
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
 };

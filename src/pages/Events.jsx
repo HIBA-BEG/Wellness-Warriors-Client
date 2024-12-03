@@ -15,13 +15,22 @@ const Dashboard = () => {
     try {
       const data = await eventService.getAllEvents();
       console.log('all events', data);
-
       setEvents(data);
     } catch (error) {
       console.error('Error fetching events:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleEventUpdated = (updatedEvent) => {
+    setEvents(events.map(event => 
+      event._id === updatedEvent._id ? updatedEvent : event
+    ));
+  };
+
+  const handleEventDeleted = (deletedEventId) => {
+    setEvents(events.filter(event => event._id !== deletedEventId));
   };
 
   useEffect(() => {
@@ -79,7 +88,12 @@ const Dashboard = () => {
           ) : (
             <div className="grid grid-cols-3 gap-6 mb-6">
               {events.map((event) => (
-                <EventCard key={event._id} event={event} />
+                <EventCard 
+                key={event._id} 
+                event={event} 
+                onEventUpdated={handleEventUpdated}
+                onEventDeleted={handleEventDeleted}
+                />
               ))}
             </div>
           )}

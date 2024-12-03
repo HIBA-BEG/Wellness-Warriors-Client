@@ -30,14 +30,14 @@ const Sidebar = () => {
       <div className="space-y-4 flex flex-col justify-start">
         <div
           onClick={() => navigate('/events')}
-          className="flex flex-row m-auto gap-3 justify-center items-center"
+          className="flex flex-row m-auto gap-3 cursor-pointer justify-center items-center"
         >
           <MdEventAvailable />
           <div>Events</div>
         </div>
         <div
           onClick={() => navigate('/participants')}
-          className="flex flex-row m-auto gap-3 justify-center items-center"
+          className="flex flex-row m-auto gap-3 cursor-pointer justify-center items-center"
         >
           <FaUsers />
           <div>Participants</div>

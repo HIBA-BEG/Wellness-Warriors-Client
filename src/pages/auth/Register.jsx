@@ -59,8 +59,9 @@ const Register = () => {
       <div className="fixed inset-0 backdrop-blur-sm bg-black bg-opacity-70 z-0"></div>
       <div className="fixed max-w-md w-full space-y-8 bg-white bg-opacity-80 p-8 rounded-xl shadow-lg z-10">
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-dark-green">Create Account</h2>
-          <p className="mt-2 text-gray-600">Join our wellness community today</p>
+          <h2 className="text-2xl font-bold text-dark-green">Hello Organizer</h2>
+          <h2 className="text-3xl font-bold text-dark-green">Create an Account</h2>
+          <p className="mt-2 text-gray-600">Join our wellness community today as an organizer</p>
         </div>
 
         {error && <div className="text-red-500 text-sm text-center mb-4">{error}</div>}
