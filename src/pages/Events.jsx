@@ -1,11 +1,43 @@
 import Sidebar from '../components/layout/Sidebar';
 import EventCard from '../components/dashboard/EventCard';
 import { TiPlusOutline } from 'react-icons/ti';
-
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AddEventModal from '../components/dashboard/AddEventModal';
+import { eventService } from '../services/eventService';
+import LoadingSpinner from '../components/common/LoadingSpinner';
+
 const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchEvents = async () => {
+    try {
+      const data = await eventService.getAllEvents();
+      console.log('all events', data);
+      setEvents(data);
+    } catch (error) {
+      console.error('Error fetching events:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEventUpdated = (updatedEvent) => {
+    setEvents(events.map((event) => (event._id === updatedEvent._id ? updatedEvent : event)));
+  };
+
+  const handleEventDeleted = (deletedEventId) => {
+    setEvents(events.filter((event) => event._id !== deletedEventId));
+  };
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const handleEventAdded = (newEvent) => {
+    setEvents((prevEvents) => [...prevEvents, newEvent]);
+  };
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -47,14 +79,29 @@ const Dashboard = () => {
         </div>
 
         <div className="p-6">
-          <div className="grid grid-cols-3 gap-6 mb-6">
-            <EventCard />
-            <EventCard />
-            <EventCard />
-          </div>
+          {loading ? (
+            <div className="flex justify-center items-center h-screen">
+              <LoadingSpinner />
+            </div>
+          ) : (
+            <div className="grid grid-cols-3 gap-6 mb-6">
+              {events.map((event) => (
+                <EventCard
+                  key={event._id}
+                  event={event}
+                  onEventUpdated={handleEventUpdated}
+                  onEventDeleted={handleEventDeleted}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
-      <AddEventModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <AddEventModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onEventAdded={handleEventAdded}
+      />
     </div>
   );
 };
