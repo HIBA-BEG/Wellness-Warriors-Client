@@ -34,11 +34,7 @@ const EventCard = ({ event, onEventUpdated, onEventDeleted }) => {
   return (
     <>
       <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 drop-shadow-2xl shadow-dark-green hover:shadow-light-green-dark">
-        <img
-          src={event.poster || sports}
-          alt={event.title}
-          className="w-full h-48 object-cover"
-        />
+        <img src={event.poster || sports} alt={event.title} className="w-full h-48 object-cover" />
         <div className="p-4">
           <div className="flex justify-between items-center">
             <h3 className="text-xl font-semibold text-light-green-dark">{event.title}</h3>

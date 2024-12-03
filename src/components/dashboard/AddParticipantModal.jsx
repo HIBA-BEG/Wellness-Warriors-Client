@@ -56,7 +56,6 @@ const AddParticipantModal = ({ isOpen, onClose, onSuccess }) => {
     <div className="fixed inset-0 backdrop-blur-sm bg-black bg-opacity-70 flex items-center justify-center z-50">
       <div className="bg-white relative rounded-lg px-8 py-6 shadow-lg border-2 border-light-green shadow-light-green max-w-2xl max-h-[90vh] flex flex-col">
         <div className="px-8 py-6 border-b border-gray-200">
-
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700 absolute top-2 right-3"
@@ -69,7 +68,6 @@ const AddParticipantModal = ({ isOpen, onClose, onSuccess }) => {
         </div>
 
         <div className="px-8 py-6 overflow-y-auto flex-1">
-
           {error && <div className="mb-4 p-2 bg-red-100 text-red-600 rounded">{error}</div>}
 
           <form onSubmit={handleSubmit} className="space-y-4">

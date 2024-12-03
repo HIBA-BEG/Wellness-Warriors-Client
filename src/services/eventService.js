@@ -55,5 +55,4 @@ export const eventService = {
       throw error.response?.data || error.message;
     }
   },
-
 };
