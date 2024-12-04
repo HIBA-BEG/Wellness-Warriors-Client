@@ -1,45 +1,96 @@
+# 🏅 Wellness Warriors - Client
 
-# Event Registration Management - Frontend
+## 📋 Project Overview
+A web application for managing sports event registrations, providing a streamlined solution for event organizers to manage events and participants efficiently.
 
-This is the frontend application for the **Event Registration Management System**. It is built with **React.js** using **Vite** for development and build processes. The frontend interacts with the backend APIs to manage events, participants, and user authentication.
+## ✨ Features
 
-## Features
+- Event management (creation, modification, deletion)
+- Participant management
+- Printable participant lists
+- Secure authentication
+- Protected routes
+- Global state management
 
-- Event Management: View and interact with a list of sporting events.
-- Participant Registration: Register and view participants for specific events.
-- User Authentication: Secure login and access control.
-- State Management: Utilizes Context API for global state management.
-- Protected Routes: Prevent unauthorized access to sensitive routes.
+## 🛠 Technology Stack
 
-## Installation
+- React.js
+- Vite
+- React Router (Nested Routes)
+- Context API
+- Axios
+- JWT Authentication
 
-### Prerequisites
-- [Node.js](https://nodejs.org/) installed
-- [npm](https://www.npmjs.com/) installed
+## 🔧 Prerequisites
 
-### Steps
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/HIBA-BEG/Wellness-Warriors-Client.git
-   cd wellness-warriors-client
-   ```
+- Node.js (v18+)
+- npm
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+## 📦 Installation
 
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
+1. Clone the Repository
+bash
+```
+git clone https://github.com/HIBA-BEG/Wellness-Warriors-Client.git
+```
 
-4. Build the production bundle:
-   ```bash
-   npm run build
-   ```
+2. Install Dependencies
+bash
+```
+npm install
+```
 
-5. Preview the production build:
-   ```bash
-   npm run preview
-   ```
+3. Create Environment File
+   
+Create a .env file in the project root:
+
+```
+VITE_API_BASE_URL=http://localhost:3000
+VITE_AUTH_TOKEN=your_jwt_token_key
+```
+
+## 🖥 Available Scripts
+
+- ```npm run dev``` : Start development server
+- ```npm run build``` : Create production build
+- ```npm run preview``` : Preview production build
+- ```npm run format``` : Formatting the files
+
+  
+## 🔐 Authentication
+
+- JWT-based authentication
+- Protected routes
+- Role-based access control
+
+## 🌐 Routing
+
+- Nested routes using React Router
+- Protected routes for authenticated users
+
+## 🚢 Deployment
+### Docker Deployment
+1- Build Docker images
+
+bash
+```
+docker-compose build
+```
+2- Run containers
+
+bash
+```
+docker-compose up
+```
+
+## 🛠 Troubleshooting
+
+- Verify backend connection
+- Check browser console for errors
+- Ensure .env configuration is correct
+
+## 📞 Contact
+
+BEGHDI Hiba
+beghiba@gmail.com
+Server Link (Back-end) : https://github.com/HIBA-BEG/Wellness-Warriors-Service.git
