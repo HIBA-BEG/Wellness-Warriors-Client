@@ -1,5 +1,8 @@
 # 🏅 Wellness Warriors - Client
 
+## 👩🏻‍💻 Projet Presentation
+[Wellness Warriors Presentation HERE](https://www.canva.com/design/DAGX5mRxzho/EUheX8EtAlBNKnvmSsvz7Q/edit?utm_content=DAGX5mRxzho&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+
 ## 📋 Project Overview
 A web application for managing sports event registrations, providing a streamlined solution for event organizers to manage events and participants efficiently.
 
