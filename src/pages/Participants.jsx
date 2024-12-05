@@ -19,7 +19,7 @@ const Participants = () => {
     try {
       setLoading(true);
       const data = await participantService.getAllParticipants();
-      // console.log('Fetched participants 2:', data);
+      console.log('Fetched participants 2:', data);
       setParticipants(data);
     } catch (err) {
       setError(err.message || 'Failed to fetch participants');
@@ -87,7 +87,7 @@ const Participants = () => {
               className="bg-dark-green text-light-green px-4 py-2 rounded-lg flex items-center"
             >
               <TiPlusOutline />
-              <span className="ml-2">Add new event</span>
+              <span className="ml-2">Add new Participant</span>
             </button>
           </div>
         </div>

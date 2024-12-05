@@ -8,6 +8,7 @@ import ForgotPassword from './pages/auth/ForgotPassword';
 // import Dashboard from './pages/Dashboard';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import Home from './pages/Home';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
       <AuthProvider>
         <div className="min-h-screen">
           <Routes>
+            <Route path="/" element={<Home />} />
             {/* <Route path="/dashboard" element={<Dashboard />} /> */}
             <Route
               path="/events"

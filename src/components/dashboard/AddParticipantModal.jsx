@@ -6,6 +6,11 @@ const UserRole = {
   PARTICIPANT: 'participant',
 };
 
+const UserGender = {
+  Man: 'man',
+  Woman: 'woman',
+};
+
 const AddParticipantModal = ({ isOpen, onClose, onSuccess }) => {
   const [loading, setLoading] = useState(false);
   const { createParticipant } = useAuth();
@@ -16,6 +21,7 @@ const AddParticipantModal = ({ isOpen, onClose, onSuccess }) => {
     email: '',
     password: '',
     role: UserRole.PARTICIPANT,
+    gender: '',
   });
 
   const handleSubmit = async (e) => {
@@ -31,6 +37,7 @@ const AddParticipantModal = ({ isOpen, onClose, onSuccess }) => {
         email: formData.email,
         password: formData.password,
         role: UserRole.PARTICIPANT,
+        gender: UserGender[formData.gender],
       });
 
       setFormData({
@@ -39,6 +46,7 @@ const AddParticipantModal = ({ isOpen, onClose, onSuccess }) => {
         email: '',
         password: '',
         role: UserRole.PARTICIPANT,
+        gender: '',
       });
 
       onSuccess();
@@ -120,6 +128,23 @@ const AddParticipantModal = ({ isOpen, onClose, onSuccess }) => {
                 onChange={(e) => setFormData({ ...formData, role: e.target.value })}
               />
             </div>
+
+            <div>
+              <label className="block font-medium text-gray-700">Gender</label>
+              <select
+                className="mt-1 block w-full text-sm bg-light-gray text-dark-green rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                value={formData.gender}
+                onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                required
+              >
+                <option value="" disabled>
+                  Select Gender
+                </option>
+                <option value={UserGender.MAN}>Man</option>
+                <option value={UserGender.WOMAN}>Woman</option>
+              </select>
+            </div>
+
             <div className="flex justify-end space-x-3 pt-4">
               <button
                 type="button"
