@@ -78,6 +78,7 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
       };
 
       const newEvent = await eventService.createEvent(eventData);
+      console.log(newEvent);
       onEventAdded?.(newEvent);
       onClose();
     } catch (error) {

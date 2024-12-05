@@ -20,10 +20,15 @@ const ParticipantCard = ({ participant, onDelete, onUpdateClick }) => {
     }
   };
 
+  const cardBackgroundClass =
+    participant.gender === 'man' ? 'bg-light-green' : 'bg-light-green-dark';
+
   if (loading) return <LoadingSpinner />;
 
   return (
-    <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 drop-shadow-2xl shadow-dark-green hover:shadow-light-green-dark">
+    <div
+      className={`rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 drop-shadow-2xl shadow-dark-green hover:shadow-light-green-dark ${cardBackgroundClass}`}
+    >
       <div className="flex flex-row">
         <img src={profileAvatar} alt="Participant" className="w-24 h-24 rounded-md" />
         <div className="flex flex-col w-full p-4">
