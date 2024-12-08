@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import LoadingSpinner from '../common/LoadingSpinner';
+import { showErrorAlert, showSuccessAlert } from '../../utils/sweetAlert';
 
 const UserRole = {
   PARTICIPANT: 'participant',
@@ -22,7 +23,18 @@ const AddParticipantModal = ({ isOpen, onClose, onSuccess }) => {
     password: '',
     role: UserRole.PARTICIPANT,
     gender: '',
+    profilePicture: null,
   });
+  const [previewUrl, setPreviewUrl] = useState(null);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData({ ...formData, profilePicture: file });
+      const fileUrl = URL.createObjectURL(file);
+      setPreviewUrl(fileUrl);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,14 +43,23 @@ const AddParticipantModal = ({ isOpen, onClose, onSuccess }) => {
 
     console.log('Created Participant:', formData);
     try {
-      await createParticipant({
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        password: formData.password,
-        role: UserRole.PARTICIPANT,
-        gender: UserGender[formData.gender],
-      });
+      if (!formData.profilePicture) {
+        setError('Please select a profile picture');
+        return;
+      }
+
+      const participantData = new FormData();
+      participantData.append('firstName', formData.firstName);
+      participantData.append('lastName', formData.lastName);
+      participantData.append('email', formData.email);
+      participantData.append('password', formData.password);
+      participantData.append('role', UserRole.PARTICIPANT);
+      participantData.append('genre', formData.gender);
+      participantData.append('profilePicture', formData.profilePicture);
+
+      await createParticipant(participantData);
+
+      await showSuccessAlert('Success!', 'Participant created successfully');
 
       setFormData({
         firstName: '',
@@ -47,13 +68,25 @@ const AddParticipantModal = ({ isOpen, onClose, onSuccess }) => {
         password: '',
         role: UserRole.PARTICIPANT,
         gender: '',
+        profilePicture: null,
       });
+      setPreviewUrl(null);
 
       onSuccess();
       onClose();
     } catch (error) {
-      setError(error.message || 'Failed to create participant');
+      showErrorAlert('Error!', error.message || 'Failed to create participant');
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const cleanup = () => {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(null);
+    }
+    onClose();
   };
 
   if (!isOpen) return null;
@@ -79,6 +112,28 @@ const AddParticipantModal = ({ isOpen, onClose, onSuccess }) => {
           {error && <div className="mb-4 p-2 bg-red-100 text-red-600 rounded">{error}</div>}
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="flex flex-col items-center mb-4">
+              <label className="w-32 h-32 rounded-full border-2 border-dashed border-light-green hover:border-dark-green cursor-pointer flex items-center justify-center overflow-hidden">
+                {previewUrl ? (
+                  <img
+                    src={previewUrl}
+                    alt="Profile preview"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="text-center text-gray-500">
+                    <i className="fas fa-camera mb-2"></i>
+                    <p>Upload Photo</p>
+                  </div>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+              </label>
+            </div>
             <div>
               <label className="block font-medium text-gray-700">First Name</label>
               <input
@@ -140,8 +195,8 @@ const AddParticipantModal = ({ isOpen, onClose, onSuccess }) => {
                 <option value="" disabled>
                   Select Gender
                 </option>
-                <option value={UserGender.MAN}>Man</option>
-                <option value={UserGender.WOMAN}>Woman</option>
+                <option value={UserGender.Man}>Man</option>
+                <option value={UserGender.Woman}>Woman</option>
               </select>
             </div>
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import participantService from '../../services/participantService';
 import LoadingSpinner from '../common/LoadingSpinner';
+import { showSuccessAlert } from '../../utils/sweetAlert';
 
 const UpdateParticipantModal = ({ isOpen, onClose, onSuccess, participant }) => {
   const [loading, setLoading] = useState(false);
@@ -28,10 +29,11 @@ const UpdateParticipantModal = ({ isOpen, onClose, onSuccess, participant }) => 
 
     try {
       await participantService.updateParticipant(participant._id, formData);
+      await showSuccessAlert('Success!', 'Participant updated successfully');
       onSuccess();
       onClose();
     } catch (error) {
-      setError(error.message || 'Failed to update participant');
+      showErrorAlert('Error!', error.message || 'Failed to update participant');
     } finally {
       setLoading(false);
     }

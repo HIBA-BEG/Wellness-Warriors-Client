@@ -13,9 +13,26 @@ const getAuthHeader = () => {
 export const eventService = {
   createEvent: async (eventData) => {
     try {
-      const response = await api.post('/event', eventData, {
-        headers: getAuthHeader(),
-      });
+      const formData = new FormData();
+
+      formData.append('title', eventData.title);
+      formData.append('description', eventData.description);
+      formData.append('location', eventData.location);
+      formData.append('startDate', JSON.stringify(eventData.startDate));
+      formData.append('endDate', JSON.stringify(eventData.endDate));
+      formData.append('organizer', eventData.organizer);
+      formData.append('participants', JSON.stringify(eventData.participants));
+      formData.append('status', eventData.status);
+
+      if (eventData.poster instanceof File) {
+        formData.append('poster', eventData.poster);
+      }
+
+      for (let pair of formData.entries()) {
+        console.log('FormData entry:', pair[0], pair[1]);
+      }
+
+      const response = await api.post('/event', formData);
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;

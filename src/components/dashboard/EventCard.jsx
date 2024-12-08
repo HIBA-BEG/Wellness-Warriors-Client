@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { eventService } from '../../services/eventService';
 import UpdateEventModal from './UpdateEventModal';
 import { useAuth } from '../../contexts/AuthContext';
+import { showConfirmDialog, showErrorAlert, showSuccessAlert } from '../../utils/sweetAlert';
 
 const EventCard = ({ event, onEventUpdated, onEventDeleted, onEventSelected, isSelected }) => {
   const { user } = useAuth();
@@ -11,16 +12,16 @@ const EventCard = ({ event, onEventUpdated, onEventDeleted, onEventSelected, isS
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
   const handleDelete = async () => {
-    if (!window.confirm('Are you sure you want to delete this event?')) {
-      return;
-    }
-
     try {
       setIsDeleting(true);
-      await eventService.deleteEvent(event._id);
-      onEventDeleted(event._id);
+      const result = await showConfirmDialog('Delete Event?', 'This action cannot be undone!');
+      if (result.isConfirmed) {
+        await eventService.deleteEvent(event._id);
+        onEventDeleted(event._id);
+        await showSuccessAlert('Deleted!', 'Event has been removed.');
+      }
     } catch (error) {
-      console.error('Error deleting event:', error);
+      showErrorAlert('Error!', error.message || 'Failed to delete event');
     } finally {
       setIsDeleting(false);
     }
@@ -39,7 +40,12 @@ const EventCard = ({ event, onEventUpdated, onEventDeleted, onEventSelected, isS
     onEventSelected(event);
   };
 
-  const isOrganizer = user?._id === event.organizer?._id;
+  const isOrganizer = user?._id === event.organizer._id;
+  console.log('isOrganizer', isOrganizer);
+  console.log('user?._id', user?._id);
+  console.log('event.organizer.id', event.organizer._id);
+  console.log('event', event);
+  console.log('event.organizer', event.organizer);
 
   return (
     <>

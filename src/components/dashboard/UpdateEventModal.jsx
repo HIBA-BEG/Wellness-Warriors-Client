@@ -3,6 +3,7 @@ import { eventService } from '../../services/eventService';
 import { useAuth } from '../../contexts/AuthContext';
 import participantService from '../../services/participantService';
 import LoadingSpinner from '../common/LoadingSpinner';
+import { showErrorAlert, showSuccessAlert } from '../../utils/sweetAlert';
 
 const EventStatus = {
   SCHEDULED: 'scheduled',
@@ -77,10 +78,11 @@ const UpdateEventModal = ({ isOpen, onClose, onEventUpdated, event }) => {
         ...formData,
         participants: selectedParticipants.map((p) => p._id),
       });
+      await showSuccessAlert('Success!', 'Event updated successfully');
       onEventUpdated(updatedEvent);
       onClose();
     } catch (error) {
-      setError('Failed to update event');
+      showErrorAlert('Error!', error.message || 'Failed to update event');
       console.error('Error updating event:', error);
     } finally {
       setLoading(false);
