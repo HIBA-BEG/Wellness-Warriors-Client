@@ -16,8 +16,9 @@ const Dashboard = () => {
   const fetchEvents = async () => {
     try {
       const data = await eventService.getAllEvents();
+      const sortedEvents = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       console.log('all events', data);
-      setEvents(data);
+      setEvents(sortedEvents);
     } catch (error) {
       console.error('Error fetching events:', error);
     } finally {
@@ -38,7 +39,7 @@ const Dashboard = () => {
   }, []);
 
   const handleEventAdded = (newEvent) => {
-    setEvents((prevEvents) => [...prevEvents, newEvent]);
+    setEvents((prevEvents) => [newEvent, ...prevEvents]);
   };
 
   const handlePrint = () => {

@@ -3,6 +3,7 @@ import { eventService } from '../../services/eventService';
 import { useAuth } from '../../contexts/AuthContext';
 import participantService from '../../services/participantService';
 import LoadingSpinner from '../common/LoadingSpinner';
+import { showErrorAlert, showSuccessAlert } from '../../utils/sweetAlert';
 
 const EventStatus = {
   SCHEDULED: 'scheduled',
@@ -71,18 +72,44 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
     e.preventDefault();
     console.log(formData);
     try {
+      if (!formData.poster || !(formData.poster instanceof File)) {
+        showErrorAlert('Error!', 'Please select a poster image');
+        return;
+      }
+
       const eventData = {
-        ...formData,
+        title: formData.title,
+        description: formData.description,
+        location: formData.location,
         startDate: new Date(formData.startDate).toISOString(),
         endDate: new Date(formData.endDate).toISOString(),
+        organizer: user._id,
+        participants: selectedParticipants.map((p) => p._id),
+        status: EventStatus.SCHEDULED,
+        poster: formData.poster,
       };
 
+      console.log('Submitting event data:', eventData);
+
       const newEvent = await eventService.createEvent(eventData);
-      console.log(newEvent);
+      await showSuccessAlert('Success!', 'Event created successfully');
+      console.log('Event created:', newEvent);
       onEventAdded?.(newEvent);
       onClose();
     } catch (error) {
       console.error('Error creating event:', error);
+      showErrorAlert('Error!', error.message || 'Failed to create event');
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      console.log('Selected file:', file);
+      setFormData((prev) => ({
+        ...prev,
+        poster: file,
+      }));
     }
   };
 
@@ -209,13 +236,21 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
             </div>
 
             <div>
-              <label className="block font-medium text-gray-700">Poster URL</label>
+              <label className="block font-medium text-gray-700">Poster</label>
               <input
-                type="text"
-                className="mt-1 block w-full text-sm bg-light-gray text-dark-green  rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                value={formData.poster}
-                onChange={(e) => setFormData({ ...formData, poster: e.target.value })}
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="mt-1 block w-full text-sm text-dark-green
+                          file:mr-4 file:py-2 file:px-4
+                          file:rounded-full file:border-0
+                          file:text-sm file:font-semibold
+                          file:bg-light-green file:text-white
+                          hover:file:bg-dark-green"
               />
+              {formData.poster && (
+                <p className="mt-2 text-sm text-gray-600">Selected file: {formData.poster.name}</p>
+              )}
             </div>
 
             <div className="flex justify-end space-x-3 pt-4">

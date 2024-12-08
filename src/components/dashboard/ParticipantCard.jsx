@@ -2,26 +2,32 @@ import { useState } from 'react';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import profileAvatar from '../../assets/profileAvatar.jpg';
 import LoadingSpinner from '../common/LoadingSpinner';
+import { showConfirmDialog, showErrorAlert, showSuccessAlert } from '../../utils/sweetAlert';
 
 const ParticipantCard = ({ participant, onDelete, onUpdateClick }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this participant?')) {
-      setLoading(true);
-      try {
+    setLoading(true);
+    try {
+      const result = await showConfirmDialog(
+        'Delete Participant?',
+        'This action cannot be undone!'
+      );
+
+      if (result.isConfirmed) {
         await onDelete(participant._id);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+        await showSuccessAlert('Deleted!', 'Participant has been removed.');
       }
+    } catch (err) {
+      showErrorAlert('Error!', err.message || 'Failed to delete participant');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const cardBackgroundClass =
-    participant.gender === 'man' ? 'bg-light-green' : 'bg-light-green-dark';
+  const cardBackgroundClass = participant.gender === 'man' ? 'bg-blue-100' : 'bg-pink-100';
 
   if (loading) return <LoadingSpinner />;
 
@@ -30,7 +36,11 @@ const ParticipantCard = ({ participant, onDelete, onUpdateClick }) => {
       className={`rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 drop-shadow-2xl shadow-dark-green hover:shadow-light-green-dark ${cardBackgroundClass}`}
     >
       <div className="flex flex-row">
-        <img src={profileAvatar} alt="Participant" className="w-24 h-24 rounded-md" />
+        <img
+          src={participant.profilePicture || profileAvatar}
+          alt="Participant"
+          className="w-24 h-24 rounded-md"
+        />
         <div className="flex flex-col w-full p-4">
           <h3 className="text-xl font-semibold text-light-green-dark">
             {participant.firstName} {participant.lastName}

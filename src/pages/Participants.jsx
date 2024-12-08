@@ -19,8 +19,9 @@ const Participants = () => {
     try {
       setLoading(true);
       const data = await participantService.getAllParticipants();
-      console.log('Fetched participants 2:', data);
-      setParticipants(data);
+      const sortedParticipants = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      console.log('Fetched participants 2:', sortedParticipants);
+      setParticipants(sortedParticipants);
     } catch (err) {
       setError(err.message || 'Failed to fetch participants');
     } finally {
@@ -42,6 +43,7 @@ const Participants = () => {
   const handleDelete = async (id) => {
     try {
       await participantService.deleteParticipant(id);
+
       setParticipants(participants.filter((p) => p._id !== id));
     } catch (err) {
       setError(err.message || 'Failed to delete participant');
