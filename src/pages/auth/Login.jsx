@@ -73,14 +73,16 @@ const Login = () => {
             />
           </div>
 
-          <div className="flex items-center justify-end">
-            <div
-              onClick={() => navigate('/forgot-password')}
-              className="text-sm text-my-orange hover:text-light-green-dark"
-            >
-              Forgot password?
+          {import.meta.env.VITE_ENABLE_FORGOT_PASSWORD === 'true' && (
+            <div className="flex items-center justify-end">
+              <div
+                onClick={() => navigate('/forgot-password')}
+                className="text-sm text-my-orange hover:text-light-green-dark"
+              >
+                Forgot password?
+              </div>
             </div>
-          </div>
+          )}
 
           <button
             type="submit"
