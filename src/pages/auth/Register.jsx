@@ -1,72 +1,113 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import background1 from '../../assets/background1.jpeg';
+import background1 from '../../assets/background1.webp';
 import { useAuth } from '../../contexts/AuthContext';
 
-const UserRole = {
-  ORGANIZER: 'organizer',
+const UserGender = {
+  MAN: 'man',
+  WOMAN: 'woman',
 };
 
 const Register = () => {
   const navigate = useNavigate();
   const { register } = useAuth();
   const [error, setError] = useState('');
+  const [previewUrl, setPreviewUrl] = useState(null);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
     password: '',
     confirmPassword: '',
-    role: UserRole.ORGANIZER,
+    gender: '',
+    profilePicture: null,
   });
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData({ ...formData, profilePicture: file });
+      const fileUrl = URL.createObjectURL(file);
+      setPreviewUrl(fileUrl);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    console.log('Register data:', formData);
-
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
 
     if (formData.password.length < 7 || formData.password.length > 32) {
       setError('Password must be between 7 and 32 characters long');
       return;
     }
 
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    if (!formData.gender) {
+      setError('Please select your gender');
+      return;
+    }
+
     try {
-      await register({
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        password: formData.password,
-        role: formData.role,
-      });
+      const userData = new FormData();
+
+      // Append all non-file fields
+      userData.append('firstName', formData.firstName);
+      userData.append('lastName', formData.lastName);
+      userData.append('email', formData.email);
+      userData.append('password', formData.password);
+      userData.append('gender', formData.gender);
+
+      if (formData.profilePicture instanceof File) {
+        userData.append('profilePicture', formData.profilePicture);
+      }
+
+      await register(userData);
       navigate('/events');
     } catch (error) {
-      setError(error.message || 'Registration failed');
+      setError(error?.message || 'Registration failed');
     }
   };
 
   return (
-    <div className="min-h-screen bg-light-gray flex items-center justify-center px-4">
+    <div className="flex min-h-screen items-center justify-center overflow-y-auto bg-light-gray px-4 py-6">
       <img
         src={background1}
         alt="background1"
-        className="absolute top-0 left-0 w-full h-full object-cover z-0 "
+        className="fixed inset-0 h-full w-full object-cover"
       />
       <div className="fixed inset-0 backdrop-blur-sm bg-black bg-opacity-70 z-0"></div>
-      <div className="fixed max-w-md w-full space-y-8 bg-white bg-opacity-80 p-8 rounded-xl shadow-lg z-10">
+      <div className="relative z-10 my-6 w-full max-w-md max-h-[92vh] space-y-8 overflow-y-auto rounded-xl bg-white bg-opacity-80 p-6 shadow-lg sm:p-8">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-dark-green">Hello Organizer</h2>
           <h2 className="text-3xl font-bold text-dark-green">Create an Account</h2>
-          <p className="mt-2 text-gray-600">Join our wellness community today as an organizer</p>
+          <p className="mt-2 text-gray-600">Join our wellness community today</p>
         </div>
 
         {error && <div className="text-red-500 text-sm text-center mb-4">{error}</div>}
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="flex flex-col items-center mb-4">
+            <label className="w-32 h-32 rounded-full border-2 border-dashed border-light-green-dark hover:border-dark-green cursor-pointer flex items-center justify-center overflow-hidden">
+              {previewUrl ? (
+                <img
+                  src={previewUrl}
+                  alt="Profile preview"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="text-center text-gray-500">
+                  <i className="fas fa-camera mb-2"></i>
+                  <p>Upload Photo</p>
+                  <p className="text-xs">(Optional)</p>
+                </div>
+              )}
+              <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+            </label>
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
               <label htmlFor="firstName" className="block font-medium text-dark-green">
@@ -98,19 +139,24 @@ const Register = () => {
               />
             </div>
           </div>
+
           <div className="space-y-1">
-            <label htmlFor="role" className="hidden font-medium text-dark-green">
-              Role
+            <label htmlFor="gender" className="block font-medium text-dark-green">
+              Gender
             </label>
-            <input
-              id="role"
-              type="text"
-              required
-              className="hidden w-full text-sm text-dark-green px-3 py-2 border border-gray-300 rounded-lg focus:outline-none
-                  focus:ring-2 focus:ring-light-green"
-              value={formData.role}
-              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-            />
+            <select
+              id="gender"
+              className="w-full text-sm text-dark-green px-3 py-2 border border-gray-300 rounded-lg focus:outline-none
+                focus:ring-2 focus:ring-light-green"
+              value={formData.gender}
+              onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+            >
+              <option value="" disabled>
+                Select Gender
+              </option>
+              <option value={UserGender.MAN}>Man</option>
+              <option value={UserGender.WOMAN}>Woman</option>
+            </select>
           </div>
 
           <div className="space-y-1">

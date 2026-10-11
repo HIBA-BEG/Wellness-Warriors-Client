@@ -37,63 +37,36 @@ bash
 git clone https://github.com/HIBA-BEG/Wellness-Warriors-Client.git
 ```
 
-2. Install Dependencies
-bash
-```
-npm install
-```
+5. Preview the production build:
+   ```bash
+   npm run preview
+   ```
 
-3. Create Environment File
-   
-Create a .env file in the project root:
+## Environment
 
-```
-VITE_API_BASE_URL=http://localhost:3000
-VITE_AUTH_TOKEN=your_jwt_token_key
+The API base URL is `VITE_API_URL`. Copy the example file and point it at the API:
+
+```bash
+cp .env.example .env
 ```
 
-## 🖥 Available Scripts
-
-- ```npm run dev``` : Start development server
-- ```npm run build``` : Create production build
-- ```npm run preview``` : Preview production build
-- ```npm run format``` : Formatting the files
-
-  
-## 🔐 Authentication
-
-- JWT-based authentication
-- Protected routes
-- Role-based access control
-
-## 🌐 Routing
-
-- Nested routes using React Router
-- Protected routes for authenticated users
-
-## 🚢 Deployment
-### Docker Deployment
-1- Build Docker images
-
-bash
 ```
-docker-compose build
-```
-2- Run containers
-
-bash
-```
-docker-compose up
+VITE_API_URL=http://localhost:3000
 ```
 
-## 🛠 Troubleshooting
+`.env` is gitignored. Do not commit it.
 
-- Verify backend connection
-- Check browser console for errors
-- Ensure .env configuration is correct
+## Vercel
 
-## 📞 Contact
+1. Import this project in Vercel. The framework preset is Vite, and the build output is `dist`.
+2. Set `VITE_API_URL` to the public API URL, for example `https://your-api.onrender.com`.
+3. `vercel.json` rewrites every path to `index.html`, so routes such as `/reset-password` work on refresh.
 
-- BEGHDI Hiba
-- beghiba@gmail.com
-- Server Link (Back-end) : https://github.com/HIBA-BEG/Wellness-Warriors-Service.git
+## Scripts
+
+```bash
+npm run dev
+npm run lint
+npm run format:check
+npm run build
+```

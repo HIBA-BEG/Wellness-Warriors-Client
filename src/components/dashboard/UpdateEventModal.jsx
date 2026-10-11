@@ -115,8 +115,8 @@ const UpdateEventModal = ({ isOpen, onClose, onEventUpdated, event }) => {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <div className="fixed inset-0 backdrop-blur-sm bg-black bg-opacity-70 flex items-center justify-center z-50">
-      <div className="bg-white relative rounded-lg shadow-lg border-2 border-light-green shadow-light-green w-full max-w-2xl max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 p-4 backdrop-blur-sm">
+      <div className="relative flex max-h-[90vh] w-full max-w-2xl flex-col rounded-lg border-2 border-light-green bg-white shadow-lg shadow-light-green">
         <div className="px-8 py-6 border-b border-gray-200">
           <button
             onClick={onClose}

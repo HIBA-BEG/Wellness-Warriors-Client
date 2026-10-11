@@ -1,4 +1,5 @@
 import api from './api';
+import { apiErrorMessage } from '../utils/apiError';
 
 const addAuthHeader = (token) => ({
   headers: {
@@ -10,9 +11,12 @@ const authService = {
   register: async (userData) => {
     try {
       const response = await api.post('/auth/register', userData);
+      if (!response.data) {
+        throw new Error('No response data received');
+      }
       return response.data;
     } catch (error) {
-      throw error.response?.data || { message: 'Registration failed' };
+      throw new Error(apiErrorMessage(error, 'Registration failed'));
     }
   },
 
@@ -21,18 +25,18 @@ const authService = {
       const response = await api.post('/auth/login', credentials);
       return response.data;
     } catch (error) {
-      throw error.response?.data || { message: 'Login failed' };
+      throw new Error(apiErrorMessage(error, 'Login failed'));
     }
   },
 
   verifyToken: async () => {
     try {
       const token = localStorage.getItem('token');
+      if (!token) return null;
       const response = await api.get('/auth/verify', addAuthHeader(token));
       return response.data;
-    } catch (error) {
-      localStorage.removeItem('token');
-      throw error;
+    } catch {
+      return null;
     }
   },
 
@@ -41,7 +45,7 @@ const authService = {
       const response = await api.post('/auth/forgot-password', { email });
       return response.data;
     } catch (error) {
-      throw error.response?.data || { message: 'Password reset request failed' };
+      throw new Error(apiErrorMessage(error, 'Password reset request failed'));
     }
   },
 
@@ -50,7 +54,7 @@ const authService = {
       const response = await api.post('/auth/reset-password', { token, password });
       return response.data;
     } catch (error) {
-      throw error.response?.data || { message: 'Password reset failed' };
+      throw new Error(apiErrorMessage(error, 'Password reset failed'));
     }
   },
 

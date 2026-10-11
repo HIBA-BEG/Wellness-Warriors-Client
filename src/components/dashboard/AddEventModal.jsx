@@ -17,7 +17,6 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
   const [selectedParticipants, setSelectedParticipants] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  // console.log('Organizer ID:', user._id);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -33,7 +32,6 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
       try {
         setLoading(true);
         const data = await participantService.getAllParticipants();
-        console.log('Fetched participants 2:', data);
         setParticipants(data);
       } catch (err) {
         setError(err.message || 'Failed to fetch participants');
@@ -70,7 +68,6 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
     try {
       if (!formData.poster || !(formData.poster instanceof File)) {
         showErrorAlert('Error!', 'Please select a poster image');
@@ -89,11 +86,8 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
         poster: formData.poster,
       };
 
-      console.log('Submitting event data:', eventData);
-
       const newEvent = await eventService.createEvent(eventData);
       await showSuccessAlert('Success!', 'Event created successfully');
-      console.log('Event created:', newEvent);
       onEventAdded?.(newEvent);
       onClose();
     } catch (error) {
@@ -105,7 +99,6 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      console.log('Selected file:', file);
       setFormData((prev) => ({
         ...prev,
         poster: file,
@@ -118,8 +111,8 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <div className="fixed inset-0 backdrop-blur-sm bg-black bg-opacity-70 flex items-center justify-center z-50">
-      <div className="bg-white relative rounded-lg px-8 py-6 shadow-lg border-2 border-light-green shadow-light-green max-w-2xl max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 p-4 backdrop-blur-sm">
+      <div className="relative flex max-h-[90vh] w-full max-w-2xl flex-col rounded-lg border-2 border-light-green bg-white px-4 py-6 shadow-lg shadow-light-green sm:px-8">
         <div className="px-8 py-6 border-b border-gray-200">
           <button
             onClick={onClose}

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import participantService from '../../services/participantService';
 import LoadingSpinner from '../common/LoadingSpinner';
-import { showSuccessAlert } from '../../utils/sweetAlert';
+import { showErrorAlert, showSuccessAlert } from '../../utils/sweetAlert';
 
 const UpdateParticipantModal = ({ isOpen, onClose, onSuccess, participant }) => {
   const [loading, setLoading] = useState(false);
@@ -43,8 +43,8 @@ const UpdateParticipantModal = ({ isOpen, onClose, onSuccess, participant }) => 
   if (loading) return <LoadingSpinner />;
 
   return (
-    <div className="fixed inset-0 backdrop-blur-sm bg-black bg-opacity-70 flex items-center justify-center z-50">
-      <div className="bg-white relative rounded-lg px-8 py-6 shadow-lg border-2 border-light-green shadow-light-green max-w-2xl max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 p-4 backdrop-blur-sm">
+      <div className="relative flex max-h-[90vh] w-full max-w-2xl flex-col rounded-lg border-2 border-light-green bg-white px-4 py-6 shadow-lg shadow-light-green sm:px-8">
         <div className="px-8 py-6 border-b border-gray-200">
           <button
             onClick={onClose}
