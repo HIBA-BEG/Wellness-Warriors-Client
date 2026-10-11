@@ -1,43 +1,41 @@
+# 🏅 Wellness Warriors - Client
 
-# Event Registration Management - Frontend
+## 👩🏻‍💻 Project Presentation
+[Wellness Warriors Presentation HERE](https://www.canva.com/design/DAGX5mRxzho/EUheX8EtAlBNKnvmSsvz7Q/edit?utm_content=DAGX5mRxzho&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
-This is the frontend application for the **Event Registration Management System**. It is built with **React.js** using **Vite** for development and build processes. The frontend interacts with the backend APIs to manage events, participants, and user authentication.
+## 📋 Project Overview
+A web application for managing sports event registrations, providing a streamlined solution for event organizers to manage events and participants efficiently.
 
-## Features
+## ✨ Features
 
-- Event Management: View and interact with a list of sporting events.
-- Participant Registration: Register and view participants for specific events.
-- User Authentication: Secure login and access control.
-- State Management: Utilizes Context API for global state management.
-- Protected Routes: Prevent unauthorized access to sensitive routes.
+- Event management (creation, modification, deletion)
+- Participant management
+- Printable participant lists
+- Secure authentication
+- Protected routes
+- Global state management
 
-## Installation
+## 🛠 Technology Stack
 
-### Prerequisites
-- [Node.js](https://nodejs.org/) installed
-- [npm](https://www.npmjs.com/) installed
+- React.js
+- Vite
+- React Router (Nested Routes)
+- Context API
+- Axios
+- JWT Authentication
 
-### Steps
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/HIBA-BEG/Wellness-Warriors-Client.git
-   cd wellness-warriors-client
-   ```
+## 🔧 Prerequisites
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+- Node.js (v18+)
+- npm
 
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
+## 📦 Installation
 
-4. Build the production bundle:
-   ```bash
-   npm run build
-   ```
+1. Clone the Repository
+bash
+```
+git clone https://github.com/HIBA-BEG/Wellness-Warriors-Client.git
+```
 
 5. Preview the production build:
    ```bash
