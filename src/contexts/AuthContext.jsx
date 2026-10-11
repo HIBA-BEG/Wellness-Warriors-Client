@@ -25,7 +25,9 @@ export const AuthProvider = ({ children }) => {
         }
       } catch (error) {
         console.error('Error verifying token:', error);
-        localStorage.removeItem('token');
+        if (error?.status !== 429) {
+          localStorage.removeItem('token');
+        }
       } finally {
         setLoading(false);
       }

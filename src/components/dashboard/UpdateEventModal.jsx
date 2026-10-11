@@ -50,7 +50,11 @@ const UpdateEventModal = ({ isOpen, onClose, onEventUpdated, event }) => {
     if (event) {
       const formatDate = (dateString) => {
         const date = new Date(dateString);
-        return date.toISOString().split('T')[0];
+        if (Number.isNaN(date.getTime())) {
+          return '';
+        }
+        const pad = (value) => String(value).padStart(2, '0');
+        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
       };
 
       setFormData({
@@ -76,6 +80,8 @@ const UpdateEventModal = ({ isOpen, onClose, onEventUpdated, event }) => {
     try {
       const updatedEvent = await eventService.updateEvent(event._id, {
         ...formData,
+        startDate: new Date(formData.startDate).toISOString(),
+        endDate: new Date(formData.endDate).toISOString(),
         participants: selectedParticipants.map((p) => p._id),
       });
       await showSuccessAlert('Success!', 'Event updated successfully');
@@ -94,10 +100,7 @@ const UpdateEventModal = ({ isOpen, onClose, onEventUpdated, event }) => {
     if (file) {
       try {
         setLoading(true);
-        const formData = new FormData();
-        formData.append('file', file);
-
-        const response = await eventService.uploadFile(formData);
+        const response = await eventService.uploadFile(file);
         setFormData((prev) => ({
           ...prev,
           poster: response.url,
@@ -157,7 +160,7 @@ const UpdateEventModal = ({ isOpen, onClose, onEventUpdated, event }) => {
               <div>
                 <label className="block font-medium text-gray-700">Start Date</label>
                 <input
-                  type="date"
+                  type="datetime-local"
                   className="mt-1 block w-full text-sm bg-light-gray text-dark-green rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   value={formData.startDate}
                   onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
@@ -166,7 +169,7 @@ const UpdateEventModal = ({ isOpen, onClose, onEventUpdated, event }) => {
               <div>
                 <label className="block font-medium text-gray-700">End Date</label>
                 <input
-                  type="date"
+                  type="datetime-local"
                   className="mt-1 block w-full text-sm bg-light-gray text-dark-green rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   value={formData.endDate}
                   onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}

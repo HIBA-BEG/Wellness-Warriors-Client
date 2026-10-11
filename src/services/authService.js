@@ -35,7 +35,12 @@ const authService = {
       if (!token) return null;
       const response = await api.get('/auth/verify', addAuthHeader(token));
       return response.data;
-    } catch {
+    } catch (error) {
+      if (error?.response?.status === 429) {
+        const rateLimitError = new Error('Too many requests');
+        rateLimitError.status = 429;
+        throw rateLimitError;
+      }
       return null;
     }
   },

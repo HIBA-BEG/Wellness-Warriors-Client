@@ -33,6 +33,10 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
+    if (error.response?.status === 429) {
+      return Promise.reject(error);
+    }
+
     const requestUrl = error.config?.url || '';
     const isAuthAttempt = authPaths.some((path) => requestUrl.includes(path));
 

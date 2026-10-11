@@ -77,6 +77,17 @@ export const eventService = {
     }
   },
 
+  uploadFile: async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append('poster', file);
+      const response = await api.post('/event/poster', formData);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
   deleteEvent: async (id) => {
     try {
       const response = await api.delete(`/event/${id}`, {

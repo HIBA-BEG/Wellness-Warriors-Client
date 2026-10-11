@@ -31,36 +31,51 @@ A web application for managing sports event registrations, providing a streamlin
 
 ## 📦 Installation
 
-1. Clone the Repository
-bash
-```
+1. Clone the repository:
+
+```bash
 git clone https://github.com/HIBA-BEG/Wellness-Warriors-Client.git
+cd Wellness-Warriors-Client
 ```
 
-5. Preview the production build:
-   ```bash
-   npm run preview
-   ```
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Copy `.env.example` to `.env` and set `VITE_API_URL` to the API, for example `http://localhost:3000`.
+
+4. Start the development server:
+
+```bash
+npm run dev
+```
+
+5. Build and preview the production bundle:
+
+```bash
+npm run build
+npm run preview
+```
 
 ## Environment
 
-The API base URL is `VITE_API_URL`. Copy the example file and point it at the API:
-
-```bash
-cp .env.example .env
-```
-
-```
-VITE_API_URL=http://localhost:3000
-```
+| Name | Required | Purpose |
+| --- | --- | --- |
+| `VITE_API_URL` | yes | API base URL. |
+| `VITE_ENABLE_FORGOT_PASSWORD` | no | Set to `true` to show the forgot-password link. Default is off, because Render's free plan blocks SMTP. The `/forgot-password` and `/reset-password` routes stay available. |
 
 `.env` is gitignored. Do not commit it.
 
 ## Vercel
 
-1. Import this project in Vercel. The framework preset is Vite, and the build output is `dist`.
+1. Import this project in Vercel. Use the Vite preset, build command `npm run build`, and output directory `dist`.
 2. Set `VITE_API_URL` to the public API URL, for example `https://your-api.onrender.com`.
-3. `vercel.json` rewrites every path to `index.html`, so routes such as `/reset-password` work on refresh.
+3. Leave `VITE_ENABLE_FORGOT_PASSWORD` unset unless the API can send mail.
+4. `vercel.json` rewrites every path to `index.html`, so routes such as `/reset-password` work on refresh.
+
+The Dockerfile builds with Node 20 and serves `dist` with nginx on port 80. Pass `VITE_API_URL` as a build argument.
 
 ## Scripts
 

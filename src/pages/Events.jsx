@@ -9,6 +9,7 @@ import LoadingSpinner from '../components/common/LoadingSpinner';
 import { FaPrint } from 'react-icons/fa6';
 import { useAuth } from '../contexts/AuthContext';
 import { canManage } from '../utils/roles';
+import { buildEventPrintHtml } from '../utils/printEvent';
 
 const PAGE_SIZE = 9;
 
@@ -85,48 +86,11 @@ const Dashboard = ({ upcomingOnly = false }) => {
     }
 
     const printWindow = window.open('', '_blank');
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>${selectedEvent.title} - Event Details</title>
-          <style>
-            body { font-family: Arial, sans-serif; padding: 20px; }
-            h1 { color: #2C5F2D; }
-            .section { margin-bottom: 20px; }
-          </style>
-        </head>
-        <body>
-          <h1>${selectedEvent.title}</h1>
-          <div class="section">
-            <h2>Event Details</h2>
-            <p>From: ${new Date(selectedEvent.startDate).toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            })}</p>
-          <p>To: ${new Date(selectedEvent.endDate).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          })}</p>
-            <p>Location: ${selectedEvent.location}</p>
-            <p>Description: ${selectedEvent.description}</p>
-          </div>
-          <div class="section">
-            <h2>Participants</h2>
-            <ul>
-              ${
-                selectedEvent.participants
-                  ?.map(
-                    (participant) => `<li>${participant.firstName} ${participant.lastName}</li>`
-                  )
-                  .join('') || 'No participants yet'
-              }
-            </ul>
-          </div>
-        </body>
-      </html>
-    `);
+    if (!printWindow) {
+      return;
+    }
+
+    printWindow.document.write(buildEventPrintHtml(selectedEvent));
     printWindow.document.close();
     printWindow.print();
   };
@@ -150,14 +114,15 @@ const Dashboard = ({ upcomingOnly = false }) => {
           placeholder="Search events..."
           className="w-full rounded-lg bg-gray-100 px-4 py-2 text-black placeholder:text-gray-500 sm:w-80"
         />
-        {manager && (
-          <button
-            onClick={handlePrint}
-            className="rounded-full p-2 text-light-green-dark hover:bg-dark-green hover:text-light-green"
-          >
-            <FaPrint size={28} />
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={handlePrint}
+          aria-label="Print event"
+          className="flex items-center justify-center gap-2 rounded-lg bg-dark-green px-4 py-2 text-light-green"
+        >
+          <FaPrint size={18} />
+          <span>Print</span>
+        </button>
         {manager && !upcomingOnly && (
           <button
             onClick={() => setIsModalOpen(true)}
