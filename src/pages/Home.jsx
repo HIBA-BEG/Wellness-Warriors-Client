@@ -15,7 +15,7 @@ const Home = () => {
       <div className="relative w-full min-h-screen flex flex-col justify-between py-12">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl text-white space-y-6">
-            <h1 className="text-5xl md:text-6xl font-bold mb-4 leading-tight animate-fade-in">
+            <h1 className="mb-4 text-4xl font-bold leading-tight sm:text-5xl md:text-6xl">
               Welcome to Wellness Warriors
             </h1>
             <p className="text-xl md:text-2xl mb-8 leading-relaxed opacity-90">

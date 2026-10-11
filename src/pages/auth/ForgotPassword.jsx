@@ -1,27 +1,35 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import background1 from '../../assets/background1.jpeg';
+import background1 from '../../assets/background1.webp';
+import authService from '../../services/authService';
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
+  const [error, setError] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Reset password requested for:', email);
-    setIsSubmitted(true);
+    setError('');
+
+    try {
+      await authService.forgotPassword(email);
+      setIsSubmitted(true);
+    } catch (submitError) {
+      setError(submitError.message || 'Password reset request failed');
+    }
   };
 
   return (
-    <div className="min-h-screen bg-light-gray flex items-center justify-center px-4">
+    <div className="flex min-h-screen items-center justify-center overflow-y-auto bg-light-gray px-4 py-6">
       <img
         src={background1}
         alt="background1"
-        className="absolute top-0 left-0 w-full h-full object-cover z-0 "
+        className="fixed inset-0 h-full w-full object-cover"
       />
-      <div className="fixed inset-0 backdrop-blur-sm bg-black bg-opacity-70 z-0"></div>
-      <div className="fixed max-w-md w-full space-y-8 bg-white bg-opacity-80 p-8 rounded-xl shadow-lg z-10">
+      <div className="fixed inset-0 z-0 bg-black bg-opacity-70 backdrop-blur-sm"></div>
+      <div className="relative z-10 my-6 w-full max-w-md max-h-[92vh] space-y-8 overflow-y-auto rounded-xl bg-white bg-opacity-80 p-6 shadow-lg sm:p-8">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-dark-green">Reset Password</h2>
           <p className="mt-2 text-gray-600">
@@ -30,6 +38,8 @@ const ForgotPassword = () => {
               : 'Check your email for password reset instructions'}
           </p>
         </div>
+
+        {error && <div className="text-red-500 text-sm text-center mb-4">{error}</div>}
 
         {!isSubmitted ? (
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>

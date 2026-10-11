@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import background1 from '../../assets/background1.jpeg';
+import background1 from '../../assets/background1.webp';
 import { useAuth } from '../../contexts/AuthContext';
 
 const Login = () => {
@@ -15,7 +15,6 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    console.log('Login data:', formData);
     try {
       await login({
         email: formData.email,
@@ -28,14 +27,14 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-light-gray flex items-center justify-center px-4">
+    <div className="flex min-h-screen items-center justify-center overflow-y-auto bg-light-gray px-4 py-6">
       <img
         src={background1}
         alt="background1"
-        className="absolute top-0 left-0 w-full h-full object-cover z-0 "
+        className="fixed inset-0 h-full w-full object-cover"
       />
       <div className="fixed inset-0 backdrop-blur-sm bg-black bg-opacity-70 z-0"></div>
-      <div className="fixed max-w-md w-full space-y-8 bg-white bg-opacity-80 p-8 rounded-xl shadow-lg z-10">
+      <div className="relative z-10 my-6 w-full max-w-md max-h-[92vh] space-y-8 overflow-y-auto rounded-xl bg-white bg-opacity-80 p-6 shadow-lg sm:p-8">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-dark-green">Welcome Back</h2>
           <p className="mt-2 text-gray-600">Please sign in to your account</p>
@@ -93,7 +92,7 @@ const Login = () => {
           </button>
 
           <div className="text-center text-sm text-gray-600">
-            Don't have an account?
+            Don&apos;t have an account?
             <div
               onClick={() => navigate('/register')}
               className="text-my-orange hover:text-light-green-dark font-medium"

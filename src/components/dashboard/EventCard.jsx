@@ -4,11 +4,13 @@ import { useState } from 'react';
 import { eventService } from '../../services/eventService';
 import UpdateEventModal from './UpdateEventModal';
 import { useAuth } from '../../contexts/AuthContext';
+import { canManage } from '../../utils/roles';
 import { showConfirmDialog, showErrorAlert, showSuccessAlert } from '../../utils/sweetAlert';
 
 const EventCard = ({ event, onEventUpdated, onEventDeleted, onEventSelected, isSelected }) => {
   const { user } = useAuth();
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isUpdatingAttendance, setIsUpdatingAttendance] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
   const handleDelete = async () => {
@@ -31,8 +33,6 @@ const EventCard = ({ event, onEventUpdated, onEventDeleted, onEventSelected, isS
   };
 
   const handleCardClick = (e) => {
-    console.log('Card clicked:', event.title);
-
     if (e.target.closest('button')) {
       e.stopPropagation();
       return;
@@ -40,32 +40,84 @@ const EventCard = ({ event, onEventUpdated, onEventDeleted, onEventSelected, isS
     onEventSelected(event);
   };
 
-  const isOrganizer = user?._id === event.organizer._id;
-  console.log('isOrganizer', isOrganizer);
-  console.log('user?._id', user?._id);
-  console.log('event.organizer.id', event.organizer._id);
-  console.log('event', event);
-  console.log('event.organizer', event.organizer);
+  const organizerId = event.organizer?._id || event.organizer;
+  const ownsEvent = String(user?._id) === String(organizerId);
+  const showActions = canManage(user) && (user?.role === 'admin' || ownsEvent);
+  const isParticipant = user?.role === 'participant';
+  const isAttending = (event.participants || []).some(
+    (person) => String(person?._id || person) === String(user?._id)
+  );
+  const hasEnded = event.status === 'completed' || new Date(event.endDate).getTime() <= Date.now();
+  const isCancelled = event.status === 'cancelled';
+  const registrationOpen = event.status === 'scheduled' && !hasEnded;
+  const showAttended = isParticipant && isAttending && !registrationOpen && !isCancelled;
+  const unavailableReason = (() => {
+    if (!isParticipant || registrationOpen) return '';
+    if (isCancelled) {
+      return isAttending
+        ? 'You were registered, but this event was cancelled.'
+        : 'This event was cancelled, so joining is closed.';
+    }
+    if (!hasEnded && new Date(event.startDate).getTime() > Date.now()) {
+      return 'Registration is closed.';
+    }
+    return '';
+  })();
+
+  const handleAttendance = async (e) => {
+    e.stopPropagation();
+    try {
+      setIsUpdatingAttendance(true);
+      const updated = isAttending
+        ? await eventService.leaveEvent(event._id)
+        : await eventService.joinEvent(event._id);
+      onEventUpdated(updated);
+      await showSuccessAlert(
+        isAttending ? 'You left this event' : "You're registered",
+        isAttending
+          ? 'Your name was removed from the list.'
+          : 'Your name is on the participant list.'
+      );
+    } catch (error) {
+      const message = error?.message || 'Could not update your attendance';
+      showErrorAlert('Error!', Array.isArray(message) ? message.join(' ') : message);
+    } finally {
+      setIsUpdatingAttendance(false);
+    }
+  };
 
   return (
     <>
       <div
         onClick={handleCardClick}
-        className={`p-4 rounded-lg shadow-md cursor-pointer ${
-          isSelected ? 'border-4 border-dark-green shadow-dark-green shadow-inner' : ''
+        className={`h-full cursor-pointer rounded-lg ring-4 ring-offset-2 ${
+          isSelected ? 'ring-dark-green' : 'ring-transparent'
         }`}
       >
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 drop-shadow-2xl shadow-dark-green hover:shadow-light-green-dark">
-          <img
-            src={event.poster || sports}
-            alt={event.title}
-            className="w-full h-48 object-cover"
-          />
-          <div className="p-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-xl font-semibold text-light-green-dark">{event.title}</h3>
-              {isOrganizer && (
-                <div className="flex gap-2">
+        <div
+          className={`flex h-full min-h-[26rem] flex-col overflow-hidden rounded-lg bg-white shadow-lg transition-shadow duration-300 hover:shadow-xl ${
+            showAttended ? 'shadow-light-green ring-4 ring-light-green' : 'shadow-dark-green'
+          }`}
+        >
+          <div className="relative">
+            <img
+              src={event.poster || sports}
+              alt={event.title}
+              className="h-44 w-full shrink-0 object-cover"
+            />
+            {showAttended && (
+              <div className="absolute inset-x-0 bottom-0 bg-light-green py-2 text-center text-sm font-bold uppercase tracking-wide text-dark-green">
+                You attended
+              </div>
+            )}
+          </div>
+          <div className="flex flex-1 flex-col p-4">
+            <div className="flex items-start justify-between gap-2">
+              <h3 className="line-clamp-2 min-h-[3.5rem] text-lg font-semibold leading-snug text-light-green-dark">
+                {event.title}
+              </h3>
+              {showActions && (
+                <div className="flex shrink-0 gap-2">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -88,12 +140,35 @@ const EventCard = ({ event, onEventUpdated, onEventDeleted, onEventSelected, isS
                 </div>
               )}
             </div>
-            <p className="mt-2 text-black">{event.description}</p>
-            <div className="mt-2 text-sm text-gray-600">
-              <p>Location: {event.location}</p>
+            <p className="mt-2 line-clamp-3 min-h-[4.5rem] text-sm text-black">
+              {event.description}
+            </p>
+            <div className="mt-auto pt-2 text-sm text-gray-600">
+              <p className="truncate">Location: {event.location}</p>
+              <p>Status: {event.status}</p>
               <p>From: {formatDate(event.startDate)}</p>
               <p>To: {formatDate(event.endDate)}</p>
+              <p>{event.participants?.length || 0} participants</p>
             </div>
+            {isParticipant && registrationOpen && (
+              <button
+                type="button"
+                onClick={handleAttendance}
+                disabled={isUpdatingAttendance}
+                className={`mt-3 w-full rounded-lg px-3 py-2 text-sm font-semibold disabled:opacity-40 ${
+                  isAttending
+                    ? 'bg-white text-red-600 ring-2 ring-red-500 hover:bg-red-50'
+                    : 'bg-light-green text-dark-green hover:bg-dark-green hover:text-light-green'
+                }`}
+              >
+                {isAttending ? 'Leave event' : 'Join event'}
+              </button>
+            )}
+            {unavailableReason && (
+              <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-700">
+                {unavailableReason}
+              </p>
+            )}
           </div>
         </div>
         <UpdateEventModal

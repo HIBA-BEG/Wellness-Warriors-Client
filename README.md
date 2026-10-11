@@ -43,3 +43,32 @@ This is the frontend application for the **Event Registration Management System*
    ```bash
    npm run preview
    ```
+
+## Environment
+
+The API base URL is `VITE_API_URL`. Copy the example file and point it at the API:
+
+```bash
+cp .env.example .env
+```
+
+```
+VITE_API_URL=http://localhost:3000
+```
+
+`.env` is gitignored. Do not commit it.
+
+## Vercel
+
+1. Import this project in Vercel. The framework preset is Vite, and the build output is `dist`.
+2. Set `VITE_API_URL` to the public API URL, for example `https://your-api.onrender.com`.
+3. `vercel.json` rewrites every path to `index.html`, so routes such as `/reset-password` work on refresh.
+
+## Scripts
+
+```bash
+npm run dev
+npm run lint
+npm run format:check
+npm run build
+```
